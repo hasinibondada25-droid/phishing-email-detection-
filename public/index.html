@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phishing Email Detection</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <span class="brand-icon">🛡️</span>
+                <span class="brand-text">PhishGuard</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#" class="nav-link active" data-tab="analyze">Analyze</a></li>
+                <li><a href="#" class="nav-link" data-tab="batch">Batch Upload</a></li>
+                <li><a href="#" class="nav-link" data-tab="stats">Dashboard</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="tab-content active" id="analyze">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Email Analysis</h2>
+                        <p>Enter email details to check for phishing indicators</p>
+                    </div>
+                    <form id="analyze-form" class="form">
+                        <div class="form-group">
+                            <label for="subject">Subject Line</label>
+                            <input type="text" id="subject" name="subject" placeholder="Enter email subject..." required>
+                        </div>
+                        <div class="form-group">
+                            <label for="body">Email Body</label>
+                            <textarea id="body" name="body" rows="6" placeholder="Enter email body content..."></textarea>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="url">URL(s) Found</label>
+                                <input type="text" id="url" name="url" placeholder="http://example.com...">
+                            </div>
+                            <div class="form-group">
+                                <label for="attachment">
+                                    <input type="checkbox" id="attachment" name="attachment">
+                                    Has Attachment
+                                </label>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Analyze Email</button>
+                    </form>
+                </div>
+
+                <div class="card result-card hidden" id="result-card">
+                    <div class="result-header">
+                        <div class="result-icon" id="result-icon">✓</div>
+                        <div class="result-text">
+                            <h3 id="result-label">Safe</h3>
+                            <p id="result-description">This email appears to be legitimate</p>
+                        </div>
+                    </div>
+                    <div class="result-details">
+                        <div class="confidence-bar">
+                            <div class="confidence-label">
+                                <span>Confidence</span>
+                                <span id="confidence-value">95%</span>
+                            </div>
+                            <div class="bar-container">
+                                <div class="bar-fill" id="confidence-bar"></div>
+                            </div>
+                        </div>
+                        <div class="probability-grid">
+                            <div class="prob-item safe">
+                                <span class="prob-label">Safe</span>
+                                <span class="prob-value" id="safe-prob">90%</span>
+                            </div>
+                            <div class="prob-item phishing">
+                                <span class="prob-label">Phishing</span>
+                                <span class="prob-value" id="phish-prob">10%</span>
+                            </div>
+                        </div>
+                        <div class="features-detected">
+                            <h4>Detected Features</h4>
+                            <div class="features-grid" id="features-grid"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content hidden" id="batch">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Batch Upload</h2>
+                        <p>Upload a CSV or Excel file with multiple emails to analyze</p>
+                    </div>
+                    <div class="upload-area" id="upload-area">
+                        <div class="upload-icon">📁</div>
+                        <p>Drag & drop files here or <label for="file-input" class="browse-link">browse</label></p>
+                        <input type="file" id="file-input" accept=".csv,.xlsx,.xls" hidden>
+                    </div>
+                    <div class="file-info hidden" id="file-info">
+                        <span class="file-name" id="file-name"></span>
+                        <button class="btn btn-secondary btn-sm" id="clear-file">Clear</button>
+                    </div>
+                    <button class="btn btn-primary" id="analyze-batch">Analyze Batch</button>
+                </div>
+
+                <div class="card hidden" id="batch-results">
+                    <div class="card-header">
+                        <h2>Batch Results</h2>
+                        <div class="batch-stats">
+                            <span class="stat-item">Total: <strong id="batch-total">0</strong></span>
+                            <span class="stat-item safe">Safe: <strong id="batch-safe">0</strong></span>
+                            <span class="stat-item phishing">Phishing: <strong id="batch-phish">0</strong></span>
+                        </div>
+                    </div>
+                    <div class="results-table-container">
+                        <table class="results-table" id="results-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Subject</th>
+                                    <th>Result</th>
+                                    <th>Confidence</th>
+                                </tr>
+                            </thead>
+                            <tbody id="results-tbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content hidden" id="stats">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon total">📧</div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="stat-total">0</span>
+                            <span class="stat-label">Total Emails</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon safe">✓</div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="stat-safe">0</span>
+                            <span class="stat-label">Safe Emails</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon phishing">⚠</div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="stat-phishing">0</span>
+                            <span class="stat-label">Phishing Emails</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon danger">⚡</div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="stat-percentage">0%</span>
+                            <span class="stat-label">Phishing Rate</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card chart-card">
+                    <h3>Detection Distribution</h3>
+                    <div class="chart-container">
+                        <div class="chart-bar-group">
+                            <div class="chart-bar safe-bar" id="safe-bar">
+                                <span class="bar-value" id="safe-bar-value">0%</span>
+                            </div>
+                            <span class="bar-label">Safe</span>
+                        </div>
+                        <div class="chart-bar-group">
+                            <div class="chart-bar phish-bar" id="phish-bar">
+                                <span class="bar-value" id="phish-bar-value">0%</span>
+                            </div>
+                            <span class="bar-label">Phishing</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>PhishGuard Email Security &copy; 2026</p>
+    </footer>
+
+    <div class="loading-overlay hidden" id="loading">
+        <div class="spinner"></div>
+        <p>Analyzing...</p>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
