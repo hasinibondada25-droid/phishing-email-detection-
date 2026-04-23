@@ -3,14 +3,18 @@ from flask_cors import CORS
 import re
 import os
 
-app = Flask(__name__, static_folder='public', static_url_path='')
+app = Flask(__name__)
 CORS(app)
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 @app.route('/')
 def home():
-    return send_from_directory('public', 'index.html')
+    return send_from_directory(os.path.join(BASE_DIR, 'public'), 'index.html')
+
+@app.route('/<path:path>')
+def serve_static(path):
+    return send_from_directory(os.path.join(BASE_DIR, 'public'), path)
 
 @app.route('/api/health')
 def health():
